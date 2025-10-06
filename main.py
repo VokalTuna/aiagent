@@ -39,7 +39,12 @@ def main():
     # If it returns responses, fetch it's candidates content and add
     # them to messages
     # Quit if it returns text.
-    generated_answer = generate_content(client, messages, verbose)
+    for _ in range(0,20):
+        generated_answer = generate_content(client, messages, verbose)
+        if isinstance(generated_answer, str):
+            print(generated_answer)
+            break
+
 
 
 

@@ -36,6 +36,8 @@ def main():
 
     # Keep track of messages
     # Repeat the generate content function at minimum 20 times
+    # If it returns responses, fetch it's candidates content and add
+    # them to messages
     # Quit if it returns text.
     generated_answer = generate_content(client, messages, verbose)
 
@@ -65,6 +67,7 @@ def generate_content(client,messages, verbose):
         function_responses.append(function_call_result)
     if not function_responses:
         raise Exception("no function reponses generated, exiting.")
+    return function_responses
 
 if __name__ == "__main__":
     main()

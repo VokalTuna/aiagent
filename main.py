@@ -49,6 +49,7 @@ def main():
 
 
 def generate_content(client,messages, verbose):
+    new_messages = messages
     response = client.models.generate_content(
         model='gemini-2.0-flash-001',
         contents=messages,
@@ -57,12 +58,17 @@ def generate_content(client,messages, verbose):
     if verbose:
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
         print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+
+    # Iterate over the candidates, and add them to messages.
+    for candidate in response.candidates:
+        new_messages.append(candidate.content)
+
     if not response.function_calls:
         return response.text
 
     function_responses = []
     for function_call_part in response.function_calls:
-        function_call_result = call_function(function_call_part,verbose=verbose)
+        function_call_result = call_function(function_call_part,verbose)
         function_call_response = function_call_result.parts[0].function_response.response
         if (not function_call_result.parts
             or not function_call_result.parts[0].function_response):
@@ -72,7 +78,6 @@ def generate_content(client,messages, verbose):
         function_responses.append(function_call_result)
     if not function_responses:
         raise Exception("no function reponses generated, exiting.")
-    return function_responses
 
 if __name__ == "__main__":
     main()
